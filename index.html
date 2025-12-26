@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahim Ahmed - Web Developer Portfolio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#151e2e', // Custom darker slate for contrast
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.5s ease-out forwards;
+        }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s ease-out forwards;
+        }
+
+        /* Ensure smooth scrolling for the whole page */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4; 
+        }
+    </style>
+
+    <!-- Import Maps to use React & Lucide from CDN -->
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://esm.sh/react@18.2.0",
+            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+            "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+        }
+    }
+    </script>
+    
+    <!-- Babel for JSX compilation in browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+            Code, Layout, Server, Database, Cloud, Terminal, 
+            Github, Linkedin, Facebook, Instagram, Mail, Phone, 
+            MapPin, Moon, Sun, ExternalLink, Download, Menu, X, 
+            ChevronRight, Star, Send, Globe, Smartphone, 
+            Zap, Award, Briefcase, GraduationCap 
+        } from 'lucide-react';
+
+        // --- MOCK DATA ---
+
+        const PERSONAL_INFO = {
+            name: "Rahim Ahmed",
+            title: "Full-Stack Web Developer",
+            location: "Dhaka, Bangladesh",
+            email: "hello@rahimahmed.dev",
+            phone: "+880 1712 345 678",
+            intro: "Building scalable, high-performance web experiences from Dhaka to the world.",
+            about: "I am a passionate Web Developer based in Bangladesh with over 5 years of experience in crafting clean, user-friendly, and efficient digital solutions. My journey started with a curiosity for how things work on the web, leading me to master the MERN stack and modern cloud technologies. I bridge the gap between complex backend logic and smooth frontend interactions.",
+            stats: [
+                { label: "Years Experience", value: "5+" },
+                { label: "Projects Completed", value: "40+" },
+                { label: "Happy Clients", value: "35+" },
+                { label: "Coffee Consumed", value: "∞" }
+            ]
+        };
+
+        const SKILLS = {
+            Frontend: [
+                { name: "React.js", level: 95 },
+                { name: "Next.js", level: 90 },
+                { name: "Tailwind CSS", level: 98 },
+                { name: "TypeScript", level: 85 },
+                { name: "Framer Motion", level: 80 }
+            ],
+            Backend: [
+                { name: "Node.js", level: 90 },
+                { name: "Express", level: 90 },
+                { name: "Laravel", level: 85 },
+                { name: "Django", level: 75 }
+            ],
+            Database: [
+                { name: "MongoDB", level: 92 },
+                { name: "PostgreSQL", level: 85 },
+                { name: "MySQL", level: 88 },
+                { name: "Firebase", level: 80 }
+            ],
+            Tools: ["Git", "Docker", "AWS", "Vercel", "Figma", "Postman", "VS Code"]
+        };
+
+        const PROJECTS = [
+            {
+                id: 1,
+                title: "E-Shop Bangladesh",
+                category: "Full-Stack",
+                image: "https://placehold.co/600x400/1e293b/0ea5e9?text=E-Shop+BD",
+                description: "A multi-vendor e-commerce platform serving local businesses with Bkash/Nagad payment integration.",
+                tech: ["Next.js", "Node.js", "MongoDB", "Stripe"],
+                live: "#",
+                github: "#"
+            },
+            {
+                id: 2,
+                title: "TaskFlow Pro",
+                category: "Frontend",
+                image: "https://placehold.co/600x400/1e293b/0ea5e9?text=TaskFlow",
+                description: "A drag-and-drop project management tool designed for remote teams.",
+                tech: ["React", "Redux", "Tailwind", "Firebase"],
+                live: "#",
+                github: "#"
+            },
+            {
+                id: 3,
+                title: "Dhaka Realty",
+                category: "Backend",
+                image: "https://placehold.co/600x400/1e293b/0ea5e9?text=Real+Estate+API",
+                description: "Robust REST API architecture for a real estate listing platform handling 10k+ requests daily.",
+                tech: ["Express", "PostgreSQL", "Redis", "Docker"],
+                live: "#",
+                github: "#"
+            },
+            {
+                id: 4,
+                title: "Portfolio v1",
+                category: "Landing Page",
+                image: "https://placehold.co/600x400/1e293b/0ea5e9?text=Creative+Portfolio",
+                description: "High-performance creative portfolio for a graphic designer with WebGL animations.",
+                tech: ["Three.js", "HTML5", "GSAP"],
+                live: "#",
+                github: "#"
+            },
+            {
+                id: 5,
+                title: "MediCare BD",
+                category: "Full-Stack",
+                image: "https://placehold.co/600x400/1e293b/0ea5e9?text=Telemedicine+App",
+                description: "Doctor appointment booking and video consultation platform.",
+                tech: ["React", "WebRTC", "Socket.io", "Node.js"],
+                live: "#",
+                github: "#"
+            },
+            {
+                id: 6,
+                title: "EduTech Master",
+                category: "Frontend",
+                image: "https://placehold.co/600x400/1e293b/0ea5e9?text=LMS+Dashboard",
+                description: "Student dashboard for an online learning management system.",
+                tech: ["Vue.js", "Chart.js", "Tailwind"],
+                live: "#",
+                github: "#"
+            }
+        ];
+
+        const SERVICES = [
+            {
+                icon: <Globe className="w-10 h-10" />,
+                title: "Web Development",
+                desc: "Custom websites built from scratch using modern frameworks like React and Next.js."
+            },
+            {
+                icon: <Smartphone className="w-10 h-10" />,
+                title: "Responsive Design",
+                desc: "Mobile-first layouts ensuring your site looks perfect on phones, tablets, and desktops."
+            },
+            {
+                icon: <Server className="w-10 h-10" />,
+                title: "Backend API",
+                desc: "Secure and scalable RESTful APIs using Node.js, Express, or Laravel."
+            },
+            {
+                icon: <Zap className="w-10 h-10" />,
+                title: "Performance Optimization",
+                desc: "Speeding up slow websites to improve SEO and user retention."
+            }
+        ];
+
+        const TIMELINE = [
+            {
+                year: "2023 - Present",
+                role: "Senior Frontend Engineer",
+                company: "TechSolutions Global (Remote)",
+                desc: "Leading the frontend team, migrating legacy code to Next.js."
+            },
+            {
+                year: "2021 - 2023",
+                role: "Full Stack Developer",
+                company: "Creative IT Bangladesh",
+                desc: "Developed 15+ custom web applications for local enterprises."
+            },
+            {
+                year: "2019 - 2021",
+                role: "Junior Web Developer",
+                company: "Freelance (Upwork)",
+                desc: "Top Rated Freelancer delivering pixel-perfect PSD to HTML conversions."
+            }
+        ];
+
+        const EDUCATION = [
+            {
+                degree: "B.Sc. in Computer Science",
+                school: "North South University, Dhaka",
+                year: "2016 - 2020"
+            },
+            {
+                degree: "Complete Web Development Bootcamp",
+                school: "Programming Hero",
+                year: "2020"
+            }
+        ];
+
+        const TESTIMONIALS = [
+            {
+                name: "John Doe",
+                role: "CEO, TechUSA",
+                text: "Rahim is an absolute wizard. He took our slow legacy site and transformed it into a blazing fast PWA. Highly recommended!",
+                rating: 5
+            },
+            {
+                name: "Sadia Islam",
+                role: "Founder, DeshiCrafts",
+                text: "Very professional and easy to work with. He understood the Bangladeshi market needs perfectly for our e-commerce store.",
+                rating: 5
+            },
+            {
+                name: "Michael Smith",
+                role: "Project Manager, LondonWeb",
+                text: "Great communication and cleaner code than most developers I've worked with. Delivered ahead of schedule.",
+                rating: 5
+            }
+        ];
+
+        const BLOGS = [
+            {
+                id: 1,
+                title: "Why Next.js is the future of React in 2024",
+                excerpt: "Exploring the benefits of Server Side Rendering and Static Site Generation.",
+                date: "Oct 12, 2023",
+                readTime: "5 min read"
+            },
+            {
+                id: 2,
+                title: "Optimizing Web Performance for Low Bandwidth Networks",
+                excerpt: "Crucial techniques for ensuring your site loads fast in developing regions.",
+                date: "Sep 28, 2023",
+                readTime: "7 min read"
+            },
+            {
+                id: 3,
+                title: "From jQuery to React: A Developer's Journey",
+                excerpt: "My personal story of transitioning stacks and the challenges faced.",
+                date: "Aug 15, 2023",
+                readTime: "4 min read"
+            }
+        ];
+
+        // --- COMPONENTS ---
+
+        const SectionTitle = ({ title, subtitle }) => (
+            <div className="mb-12 text-center">
+                <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-500 to-blue-600 mb-4 inline-block">
+                {title}
+                </h2>
+                <div className="h-1 w-20 bg-cyan-500 mx-auto rounded-full mb-4"></div>
+                {subtitle && <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">{subtitle}</p>}
+            </div>
+        );
+
+        const SkillBar = ({ name, level }) => (
+            <div className="mb-6">
+                <div className="flex justify-between mb-2">
+                <span className="font-semibold text-slate-700 dark:text-slate-200">{name}</span>
+                <span className="text-cyan-600 font-mono">{level}%</span>
+                </div>
+                <div className="h-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div 
+                    className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${level}%` }}
+                ></div>
+                </div>
+            </div>
+        );
+
+        const ProjectCard = ({ project }) => (
+            <div className="group bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-100 dark:border-slate-700 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl flex flex-col h-full">
+                <div className="relative overflow-hidden h-48">
+                <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <div className="absolute top-2 right-2 bg-slate-900/80 text-cyan-400 text-xs px-2 py-1 rounded backdrop-blur-sm border border-slate-700">
+                    {project.category}
+                </div>
+                </div>
+                <div className="p-6 flex-1 flex flex-col">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">{project.title}</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-sm mb-4 flex-1">{project.description}</p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                    {project.tech.map(t => (
+                    <span key={t} className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded">
+                        {t}
+                    </span>
+                    ))}
+                </div>
+                <div className="flex gap-4 mt-auto">
+                    <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors text-sm font-medium">
+                    <ExternalLink size={16} /> Live Demo
+                    </button>
+                    <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm font-medium">
+                    <Github size={16} /> Code
+                    </button>
+                </div>
+                </div>
+            </div>
+        );
+
+        // --- MAIN PAGES ---
+
+        const HomePage = ({ setPage }) => (
+            <div className="min-h-screen flex items-center justify-center pt-16">
+                <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+                <div className="space-y-6 animate-fade-in-up">
+                    <div className="inline-block px-4 py-1.5 rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 text-sm font-semibold mb-2">
+                    Hello, I'm {PERSONAL_INFO.name} 👋
+                    </div>
+                    <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900 dark:text-white leading-tight">
+                    Web Developer Creating <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Fast & Scalable</span> Experiences.
+                    </h1>
+                    <p className="text-lg text-slate-600 dark:text-slate-300 max-w-lg">
+                    Specializing in the MERN stack. I build modern, accessible, and performant web applications that help businesses grow.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                    <button 
+                        onClick={() => setPage('projects')}
+                        className="px-8 py-3.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-lg font-bold shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all flex items-center justify-center gap-2"
+                    >
+                        <Code size={20} /> View Work
+                    </button>
+                    <button 
+                        onClick={() => setPage('contact')}
+                        className="px-8 py-3.5 border-2 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-white rounded-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+                    >
+                        <Briefcase size={20} /> Hire Me
+                    </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-6 pt-8 border-t border-slate-200 dark:border-slate-800 mt-8">
+                    {PERSONAL_INFO.stats.slice(0,3).map((stat, i) => (
+                        <div key={i}>
+                        <h4 className="text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</h4>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{stat.label}</p>
+                        </div>
+                    ))}
+                    </div>
+                </div>
+
+                <div className="relative hidden md:block">
+                    {/* Abstract Tech Graphic */}
+                    <div className="relative z-10 bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
+                    <div className="flex gap-2 mb-4">
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div className="space-y-2 font-mono text-sm">
+                        <div className="text-purple-400">const <span className="text-yellow-400">developer</span> = <span className="text-blue-400">new</span> Developer();</div>
+                        <div className="text-slate-300">developer.<span className="text-blue-400">name</span> = <span className="text-green-400">"{PERSONAL_INFO.name}"</span>;</div>
+                        <div className="text-slate-300">developer.<span className="text-blue-400">stack</span> = [<span className="text-green-400">"React"</span>, <span className="text-green-400">"Node"</span>, <span className="text-green-400">"AWS"</span>];</div>
+                        <div className="text-slate-300">developer.<span className="text-blue-400">status</span> = <span className="text-green-400">"Available for hire"</span>;</div>
+                        <div className="text-slate-500 mt-4">// Let's build something amazing together</div>
+                        <div className="flex gap-2 mt-2">
+                            <div className="px-3 py-1 bg-slate-900 rounded text-cyan-400">Next.js</div>
+                            <div className="px-3 py-1 bg-slate-900 rounded text-blue-400">TypeScript</div>
+                            <div className="px-3 py-1 bg-slate-900 rounded text-purple-400">GraphQL</div>
+                        </div>
+                    </div>
+                    </div>
+                    {/* Background blobs */}
+                    <div className="absolute -top-10 -right-10 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
+                    <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -z-10 animate-pulse delay-1000"></div>
+                </div>
+                </div>
+            </div>
+        );
+
+        const AboutPage = () => (
+            <div className="container mx-auto px-6 py-20 animate-fade-in">
+                <SectionTitle title="About Me" subtitle="Get to know the developer behind the code." />
+                
+                <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
+                <div className="relative">
+                    <div className="w-full aspect-square md:aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
+                    <img 
+                        src="https://placehold.co/500x600/1e293b/0ea5e9?text=Rahim+Ahmed" 
+                        alt="Rahim Ahmed" 
+                        className="w-full h-full object-cover"
+                    />
+                    </div>
+                    <div className="absolute -bottom-6 -right-6 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-cyan-100 dark:bg-cyan-900/50 rounded-full text-cyan-600">
+                        <MapPin />
+                        </div>
+                        <div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Located in</p>
+                        <p className="font-bold text-slate-800 dark:text-white">Dhaka, Bangladesh</p>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+                    A Journey Fueled by <span className="text-cyan-500">Curiosity</span> & <span className="text-blue-500">Coffee</span>.
+                    </h3>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+                    {PERSONAL_INFO.about}
+                    </p>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-8">
+                    When I'm not coding, you can find me exploring the chaotic beauty of Old Dhaka, 
+                    reading tech blogs, or contributing to open-source projects. I believe in continuous learning 
+                    and helping the local dev community grow.
+                    </p>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700">
+                        <h4 className="font-bold text-lg mb-1 flex items-center gap-2">
+                        <Award className="text-cyan-500" size={18} /> Experience
+                        </h4>
+                        <p className="text-sm text-slate-500">5+ Years in Industry</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700">
+                        <h4 className="font-bold text-lg mb-1 flex items-center gap-2">
+                        <Zap className="text-yellow-500" size={18} /> Support
+                        </h4>
+                        <p className="text-sm text-slate-500">24/7 Online Support</p>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        );
+
+        const SkillsPage = () => (
+            <div className="container mx-auto px-6 py-20 animate-fade-in">
+                <SectionTitle title="Technical Arsenal" subtitle="The tools and technologies I use to bring ideas to life." />
+                
+                <div className="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800 dark:text-white">
+                    <Layout className="text-cyan-500" /> Frontend Development
+                    </h3>
+                    <div className="space-y-2">
+                    {SKILLS.Frontend.map(s => <SkillBar key={s.name} {...s} />)}
+                    </div>
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800 dark:text-white">
+                    <Server className="text-blue-500" /> Backend Development
+                    </h3>
+                    <div className="space-y-2">
+                    {SKILLS.Backend.map(s => <SkillBar key={s.name} {...s} />)}
+                    </div>
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800 dark:text-white">
+                    <Database className="text-green-500" /> Database
+                    </h3>
+                    <div className="space-y-2">
+                    {SKILLS.Database.map(s => <SkillBar key={s.name} {...s} />)}
+                    </div>
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800 dark:text-white">
+                    <Terminal className="text-purple-500" /> Tools & Cloud
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                    {SKILLS.Tools.map((tool) => (
+                        <span key={tool} className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 font-medium shadow-sm flex items-center gap-2">
+                        {tool === 'AWS' && <Cloud size={16} />}
+                        {tool}
+                        </span>
+                    ))}
+                    </div>
+                </div>
+                </div>
+            </div>
+        );
+
+        const ProjectsPage = () => {
+            const [filter, setFilter] = useState('All');
+            const filters = ['All', 'Full-Stack', 'Frontend', 'Backend', 'Landing Page'];
+
+            const filteredProjects = filter === 'All' 
+                ? PROJECTS 
+                : PROJECTS.filter(p => p.category === filter);
+
+            return (
+                <div className="container mx-auto px-6 py-20 animate-fade-in">
+                <SectionTitle title="Featured Projects" subtitle="A collection of my best work." />
+                
+                <div className="flex flex-wrap justify-center gap-4 mb-12">
+                    {filters.map(f => (
+                    <button
+                        key={f}
+                        onClick={() => setFilter(f)}
+                        className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                        filter === f 
+                            ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/30' 
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                        }`}
+                    >
+                        {f}
+                    </button>
+                    ))}
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filteredProjects.map(project => (
+                    <ProjectCard key={project.id} project={project} />
+                    ))}
+                </div>
+                </div>
+            );
+        };
+
+        const ServicesPage = () => (
+            <div className="container mx-auto px-6 py-20 animate-fade-in">
+                <SectionTitle title="My Services" subtitle="Quality services tailored to your business needs." />
+                
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {SERVICES.map((service, index) => (
+                    <div key={index} className="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-100 dark:border-slate-700 hover:-translate-y-2 transition-transform duration-300 text-center">
+                    <div className="inline-block p-4 rounded-full bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 mb-6">
+                        {service.icon}
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{service.title}</h3>
+                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">{service.desc}</p>
+                    </div>
+                ))}
+                </div>
+
+                {/* Simple Pricing/Contact CTA */}
+                <div className="mt-20 p-8 md:p-12 bg-slate-900 rounded-2xl text-center relative overflow-hidden">
+                <div className="relative z-10">
+                    <h3 className="text-3xl font-bold text-white mb-4">Have a custom requirement?</h3>
+                    <p className="text-slate-400 mb-8 max-w-xl mx-auto">I offer flexible pricing based on project scope. Let's discuss your project requirements to get a custom quote.</p>
+                    <button className="px-8 py-3 bg-cyan-500 text-white font-bold rounded-lg hover:bg-cyan-600 transition-colors">
+                    Get a Quote
+                    </button>
+                </div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -z-0"></div>
+                </div>
+            </div>
+        );
+
+        const ResumePage = () => (
+            <div className="container mx-auto px-6 py-20 animate-fade-in max-w-4xl">
+                <SectionTitle title="Resume" subtitle="My professional trajectory." />
+                
+                <div className="flex justify-center mb-12">
+                <button className="flex items-center gap-2 px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors shadow-lg">
+                    <Download size={20} /> Download CV (PDF)
+                </button>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-8 flex items-center gap-3">
+                    <Briefcase className="text-cyan-500" /> Experience
+                    </h3>
+                    <div className="space-y-8 border-l-2 border-slate-200 dark:border-slate-700 pl-8 ml-3">
+                    {TIMELINE.map((item, index) => (
+                        <div key={index} className="relative">
+                        <span className="absolute -left-[39px] top-1 h-5 w-5 rounded-full border-4 border-white dark:border-slate-900 bg-cyan-500"></span>
+                        <span className="text-sm text-cyan-600 dark:text-cyan-400 font-bold tracking-wider">{item.year}</span>
+                        <h4 className="text-lg font-bold text-slate-900 dark:text-white mt-1">{item.role}</h4>
+                        <p className="text-slate-500 dark:text-slate-400 font-medium mb-2">{item.company}</p>
+                        <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">{item.desc}</p>
+                        </div>
+                    ))}
+                    </div>
+                </div>
+
+                <div>
+                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-8 flex items-center gap-3">
+                    <GraduationCap className="text-blue-500" /> Education
+                    </h3>
+                    <div className="space-y-8 border-l-2 border-slate-200 dark:border-slate-700 pl-8 ml-3">
+                    {EDUCATION.map((item, index) => (
+                        <div key={index} className="relative">
+                        <span className="absolute -left-[39px] top-1 h-5 w-5 rounded-full border-4 border-white dark:border-slate-900 bg-blue-500"></span>
+                        <span className="text-sm text-blue-600 dark:text-blue-400 font-bold tracking-wider">{item.year}</span>
+                        <h4 className="text-lg font-bold text-slate-900 dark:text-white mt-1">{item.degree}</h4>
+                        <p className="text-slate-500 dark:text-slate-400">{item.school}</p>
+                        </div>
+                    ))}
+                    </div>
+
+                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white mt-12 mb-8 flex items-center gap-3">
+                    <Award className="text-purple-500" /> Certifications
+                    </h3>
+                    <ul className="space-y-4">
+                    <li className="flex items-start gap-3 text-slate-600 dark:text-slate-300">
+                        <ChevronRight className="text-purple-500 shrink-0 mt-1" size={16} />
+                        <div>
+                        <strong className="block text-slate-900 dark:text-white">Meta Front-End Developer</strong>
+                        <span className="text-sm text-slate-500">Coursera, 2022</span>
+                        </div>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-600 dark:text-slate-300">
+                        <ChevronRight className="text-purple-500 shrink-0 mt-1" size={16} />
+                        <div>
+                        <strong className="block text-slate-900 dark:text-white">AWS Certified Cloud Practitioner</strong>
+                        <span className="text-sm text-slate-500">Amazon Web Services, 2023</span>
+                        </div>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+        );
+
+        const TestimonialsPage = () => (
+            <div className="container mx-auto px-6 py-20 animate-fade-in">
+                <SectionTitle title="Client Stories" subtitle="What people say about working with me." />
+                
+                <div className="grid md:grid-cols-3 gap-8">
+                {TESTIMONIALS.map((t, i) => (
+                    <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-100 dark:border-slate-700 flex flex-col">
+                    <div className="flex text-yellow-400 mb-4">
+                        {[...Array(t.rating)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-300 italic mb-6 flex-1">"{t.text}"</p>
+                    <div className="flex items-center gap-3 mt-auto border-t border-slate-100 dark:border-slate-700 pt-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {t.name[0]}
+                        </div>
+                        <div>
+                        <h4 className="font-bold text-slate-900 dark:text-white text-sm">{t.name}</h4>
+                        <p className="text-xs text-slate-500">{t.role}</p>
+                        </div>
+                    </div>
+                    </div>
+                ))}
+                </div>
+            </div>
+        );
+
+        const BlogPage = () => (
+            <div className="container mx-auto px-6 py-20 animate-fade-in">
+                <SectionTitle title="Tech Thoughts" subtitle="Articles on web development and tech trends." />
+                
+                <div className="grid md:grid-cols-3 gap-8">
+                {BLOGS.map(blog => (
+                    <article key={blog.id} className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 dark:border-slate-700">
+                    <img 
+                        src={`https://placehold.co/600x300/1e293b/0ea5e9?text=Blog+Post+${blog.id}`} 
+                        alt="Blog Cover" 
+                        className="w-full h-48 object-cover"
+                    />
+                    <div className="p-6">
+                        <div className="flex items-center gap-4 text-xs text-slate-500 mb-3">
+                        <span>{blog.date}</span>
+                        <span>•</span>
+                        <span>{blog.readTime}</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 hover:text-cyan-500 transition-colors cursor-pointer">
+                        {blog.title}
+                        </h3>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">
+                        {blog.excerpt}
+                        </p>
+                        <button className="text-cyan-600 dark:text-cyan-400 text-sm font-semibold hover:underline">Read More →</button>
+                    </div>
+                    </article>
+                ))}
+                </div>
+            </div>
+        );
+
+        const ContactPage = () => (
+            <div className="container mx-auto px-6 py-20 animate-fade-in">
+                <SectionTitle title="Get In Touch" subtitle="Let's build something amazing together." />
+                
+                <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+                <div className="space-y-8">
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Contact Information</h3>
+                    <p className="text-slate-600 dark:text-slate-300">
+                    I am currently available for freelance projects and full-time remote roles. 
+                    Feel free to reach out!
+                    </p>
+                    
+                    <div className="space-y-6">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-full flex items-center justify-center text-cyan-600">
+                        <Mail />
+                        </div>
+                        <div>
+                        <p className="text-sm text-slate-500">Email Me</p>
+                        <p className="font-semibold text-slate-900 dark:text-white">{PERSONAL_INFO.email}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600">
+                        <Phone />
+                        </div>
+                        <div>
+                        <p className="text-sm text-slate-500">Call Me</p>
+                        <p className="font-semibold text-slate-900 dark:text-white">{PERSONAL_INFO.phone}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600">
+                        <MapPin />
+                        </div>
+                        <div>
+                        <p className="text-sm text-slate-500">Location</p>
+                        <p className="font-semibold text-slate-900 dark:text-white">{PERSONAL_INFO.location}</p>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div className="pt-8">
+                    <h4 className="font-bold text-slate-900 dark:text-white mb-4">Follow Me</h4>
+                    <div className="flex gap-4">
+                        {[Linkedin, Github, Facebook, Instagram].map((Icon, i) => (
+                        <a key={i} href="#" className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-cyan-500 hover:text-white transition-all">
+                            <Icon size={20} />
+                        </a>
+                        ))}
+                    </div>
+                    </div>
+                </div>
+
+                <form className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 space-y-6">
+                    <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Your Name</label>
+                    <input type="text" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all dark:text-white" placeholder="John Doe" />
+                    </div>
+                    <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email Address</label>
+                    <input type="email" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all dark:text-white" placeholder="john@example.com" />
+                    </div>
+                    <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Subject</label>
+                    <input type="text" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all dark:text-white" placeholder="Project Inquiry" />
+                    </div>
+                    <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Message</label>
+                    <textarea rows="4" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all dark:text-white" placeholder="Tell me about your project..."></textarea>
+                    </div>
+                    <button type="button" className="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                    <Send size={18} /> Send Message
+                    </button>
+                </form>
+                </div>
+            </div>
+        );
+
+        // --- MAIN APP COMPONENT ---
+
+        function Portfolio() {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [darkMode, setDarkMode] = useState(true);
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+            // Handle Dark Mode
+            useEffect(() => {
+                if (darkMode) {
+                document.documentElement.classList.add('dark');
+                } else {
+                document.documentElement.classList.remove('dark');
+                }
+            }, [darkMode]);
+
+            const navLinks = [
+                { id: 'home', label: 'Home' },
+                { id: 'about', label: 'About' },
+                { id: 'skills', label: 'Skills' },
+                { id: 'projects', label: 'Projects' },
+                { id: 'services', label: 'Services' },
+                { id: 'resume', label: 'Resume' },
+                { id: 'testimonials', label: 'Reviews' },
+                { id: 'blog', label: 'Blog' },
+                { id: 'contact', label: 'Contact' },
+            ];
+
+            const renderPage = () => {
+                switch(currentPage) {
+                case 'home': return <HomePage setPage={setCurrentPage} />;
+                case 'about': return <AboutPage />;
+                case 'skills': return <SkillsPage />;
+                case 'projects': return <ProjectsPage />;
+                case 'services': return <ServicesPage />;
+                case 'resume': return <ResumePage />;
+                case 'testimonials': return <TestimonialsPage />;
+                case 'blog': return <BlogPage />;
+                case 'contact': return <ContactPage />;
+                default: return <HomePage setPage={setCurrentPage} />;
+                }
+            };
+
+            return (
+                <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+                
+                {/* --- NAVBAR --- */}
+                <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${darkMode ? 'bg-slate-900/80 border-b border-slate-800' : 'bg-white/80 border-b border-slate-200'}`}>
+                    <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+                    
+                    {/* Logo */}
+                    <div 
+                        className="flex items-center gap-2 font-bold text-xl cursor-pointer"
+                        onClick={() => setCurrentPage('home')}
+                    >
+                        <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
+                        <Code size={20} />
+                        </div>
+                        <span className="tracking-tight">Rahim<span className="text-cyan-500">.Dev</span></span>
+                    </div>
+
+                    {/* Desktop Menu */}
+                    <div className="hidden lg:flex items-center gap-6">
+                        {navLinks.map(link => (
+                        <button
+                            key={link.id}
+                            onClick={() => setCurrentPage(link.id)}
+                            className={`text-sm font-medium transition-colors hover:text-cyan-500 ${
+                            currentPage === link.id 
+                                ? 'text-cyan-500' 
+                                : (darkMode ? 'text-slate-300' : 'text-slate-600')
+                            }`}
+                        >
+                            {link.label}
+                        </button>
+                        ))}
+                        
+                        <button 
+                        onClick={() => setDarkMode(!darkMode)}
+                        className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        >
+                        {darkMode ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-slate-600" />}
+                        </button>
+                    </div>
+
+                    {/* Mobile Menu Toggle */}
+                    <div className="lg:hidden flex items-center gap-4">
+                        <button 
+                        onClick={() => setDarkMode(!darkMode)}
+                        className="p-2"
+                        >
+                        {darkMode ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-slate-600" />}
+                        </button>
+                        <button onClick={() => setMobileMenuOpen(true)}>
+                        <Menu size={24} className="text-slate-700 dark:text-slate-200" />
+                        </button>
+                    </div>
+                    </div>
+                </nav>
+
+                {/* --- MOBILE SIDEBAR --- */}
+                <div className={`fixed inset-0 z-50 lg:hidden pointer-events-none transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0'}`}>
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}></div>
+                    <div className={`absolute right-0 top-0 bottom-0 w-64 bg-white dark:bg-slate-900 shadow-2xl transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                    <div className="p-6 flex flex-col h-full">
+                        <div className="flex justify-end mb-8">
+                        <button onClick={() => setMobileMenuOpen(false)}>
+                            <X size={24} className="text-slate-500" />
+                        </button>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                        {navLinks.map(link => (
+                            <button
+                            key={link.id}
+                            onClick={() => {
+                                setCurrentPage(link.id);
+                                setMobileMenuOpen(false);
+                            }}
+                            className={`text-left text-lg font-medium py-2 border-b border-slate-100 dark:border-slate-800 ${
+                                currentPage === link.id ? 'text-cyan-500' : 'text-slate-600 dark:text-slate-300'
+                            }`}
+                            >
+                            {link.label}
+                            </button>
+                        ))}
+                        </div>
+                        <div className="mt-auto pt-6 text-center text-xs text-slate-400">
+                        &copy; 2024 Rahim Ahmed.
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                {/* --- MAIN CONTENT --- */}
+                <main className="pt-16 min-h-screen flex flex-col">
+                    {renderPage()}
+                    
+                    {/* --- FOOTER --- */}
+                    <footer className="py-8 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
+                    <div className="container mx-auto px-6 text-center">
+                        <div className="flex justify-center gap-6 mb-4">
+                        {[Github, Linkedin, Mail].map((Icon, i) => (
+                            <a key={i} href="#" className="text-slate-400 hover:text-cyan-500 transition-colors">
+                                <Icon size={20} />
+                            </a>
+                        ))}
+                        </div>
+                        <p className="text-slate-500 dark:text-slate-500 text-sm">
+                        Designed & Built by <span className="text-cyan-600 dark:text-cyan-400 font-bold"><a href="https://www.facebook.com/profile.php?id=100063808086007">OcaByte</a></span> in Dhaka.
+                        </p>
+                    </div>
+                    </footer>
+                </main>
+
+                </div>
+            );
+        }
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<Portfolio />);
+    </script>
+</body>
+</html>
